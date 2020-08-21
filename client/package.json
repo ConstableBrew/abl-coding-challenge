@@ -1,0 +1,61 @@
+{
+    "author": "Michael Brewer",
+    "babel": {
+        "presets": [
+            "@babel/preset-env",
+            "@babel/preset-react"
+        ],
+        "plugins": [
+            "@babel/plugin-proposal-class-properties",
+            "@babel/plugin-proposal-export-default-from"
+        ]
+    },
+    "dependencies": {
+    },
+    "description": "",
+    "devDependencies": {
+        "@babel/core": "^7.10.3",
+        "@babel/plugin-proposal-class-properties": "^7.10.4",
+        "@babel/plugin-proposal-export-default-from": "^7.10.4",
+        "@babel/preset-env": "^7.10.3",
+        "@babel/preset-react": "^7.10.4",
+        "babel-loader": "^8.1.0",
+        "jest": "^26.0.1",
+        "node-sass": "^4.14.1",
+        "normalize-scss": "^7.0.1",
+        "sass": "^1.26.10",
+        "sass-loader": "^9.0.3",
+        "webpack": "^4.44.1",
+        "webpack-cli": "^3.3.11"
+    },
+    "engines": {
+        "node": "14.8.0"
+    },
+    "jest": {
+        "collectCoverageFrom": [
+            "src/**/*.js",
+            "!**/node_modules/**",
+            "!**/public/**",
+            "!**/coverage/**"
+        ],
+        "moduleNameMapper": {
+            "^src/(.*)$": "<rootDir>/src/$1"
+        }
+    },
+    "license": "ISC",
+    "name": "ABL Coding Challenge",
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/constablebrew/abl-coding-challenge.git"
+    },
+    "scripts": {
+        "build": "webpack --mode=production --progress && npm run build-sass",
+        "build-scss": "node-sass src/base.scss public/css/base.css --output-style compressed",
+        "start": "node ./server.js",
+        "test": "jest --coverage",
+        "watch-build": "webpack --mode=development --watch --progress",
+        "watch-test": "jest --watch --coverage"
+    },
+    "version": "0.0.1"
+}
