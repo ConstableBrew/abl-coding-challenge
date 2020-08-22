@@ -1,7 +1,5 @@
 import Chart from "chart.js";
-
-
-const isNumber = (val) => typeof val === "number" && val !== Infinity && val !== -Infinity && !Number.isNaN(val);
+import {isNumber} from 'src/utils';
 
 const MAX_BUFFER_SIZE = 1024;
 let ws;
