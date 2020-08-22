@@ -1,0 +1,13 @@
+// This module is to optimize the first load.
+// Only include styles that are important to the first meaningful paint of the page.
+@import 'node_modules/normalize-scss/sass/_normalize.scss';
+@include normalize();
+
+@import 'styles/loading-spinner.scss';
+
+body {
+  background: black;
+  color: lightgray;
+  height: 100%;
+  width: 100%;
+}
