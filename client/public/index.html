@@ -7,6 +7,11 @@
         <script defer type="module" src="js/app.js"></script>
     </head>
     <body class="loading-spinner">
-        <canvas id="primary-display"></canvas>
+        <div class="sparklines">
+            <div id="primary-sparkline" class="sparkline active"></div>
+            <div id="secondary-sparkline" class="sparkline"></div>
+            <div id="tertiary-sparkline" class="sparkline"></div>
+        </div>
+        <div id="main-display"></div>
     </body>
 </html>
