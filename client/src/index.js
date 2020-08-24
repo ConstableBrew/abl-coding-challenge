@@ -43,7 +43,6 @@ const setFocus = (sourceName) => {
   focusedStream = sourceName;
   // Remove .active from each of the sparkline graphs and add .active to the one focused on
   streamMap.forEach((config, name) => {
-    console.log('streamMap', name, sourceName)
     if (name === sourceName) {
       document.getElementById(config.id).classList.add('active');
       mainChart.config.data.datasets[0].label = sourceName;
@@ -71,20 +70,15 @@ const updatedCharts = {};
 
 
 // Updates chart's data and then redraws the graph
-const drawChart = (sourceName, chartObject) => {
+const drawChart = ({sourceName, chartObject}) => {
   const data = feed.getData(sourceName);
   try {
-    if (updatedCharts[sourceName]) {
       chartObject.config.data.datasets[0].data = data;
       chartObject.update();
-    }
   }
   catch (err) {
     console.error('Error when drawing chart:', err);
     // Chart.js occasionally has problems calculating the axis labels and ticks to draw in it's autoSkip calculations
-  }
-  finally {
-    updatedCharts[sourceName] = false;
   }
 };
 
@@ -94,8 +88,23 @@ const drawCharts = (timestamp) => {
     return;
   }
   drawCharts.timestamp = timestamp;
-  drawChart(focusedStream, mainChart);
-  streamMap.forEach((config) => drawChart(config.sourceName, config.chart));
+
+  for (const sourceName in updatedCharts) {
+    if (updatedCharts[sourceName]) {
+      const config = streamMap.get(sourceName)
+      drawChart({
+        sourceName: config.sourceName,
+        chartObject: config.chart,
+      });
+      if (focusedStream === sourceName) {
+        drawChart({
+          sourceName,
+          chartObject: mainChart,
+        });
+      }
+      updatedCharts[sourceName] = false;
+    }
+  }
 };
 drawCharts.timestamp = 0;
 
