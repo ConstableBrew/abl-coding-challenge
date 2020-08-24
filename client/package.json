@@ -2,8 +2,7 @@
     "author": "Michael Brewer",
     "babel": {
         "presets": [
-            "@babel/preset-env",
-            "@babel/preset-react"
+            ["@babel/preset-env", {"targets": {"esmodules": true}}]
         ],
         "plugins": [
             "@babel/plugin-proposal-class-properties",
@@ -24,6 +23,8 @@
         "@babel/preset-react": "^7.10.4",
         "babel-loader": "^8.1.0",
         "jest": "^26.0.1",
+        "jest-websocket-mock": "^2.1.0",
+        "mock-socket": "^9.0.3",
         "node-sass": "^4.14.1",
         "normalize-scss": "^7.0.1",
         "sass": "^1.26.10",

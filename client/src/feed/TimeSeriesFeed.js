@@ -1,10 +1,5 @@
 import {isNumber} from "src/utils";
 
-const READYSTATE_CONNECTING = 0;
-const READYSTATE_OPEN = 1;
-const READYSTATE_CLOSING = 2;
-const READYSTATE_CLOSED = 3
-
 const MAX_BUFFER_SIZE = 500;
 
 export class TimeSeriesFeed {
@@ -15,28 +10,32 @@ export class TimeSeriesFeed {
     onClose,
   }) {
     this.ws = null;
-    this.url = url;
     this.eventKey = eventKey;
     this.buffers = {};
     this.subscribers = {};
+    this.url = url;
+    this.onOpen = onOpen;
+    this.onClose = onClose;
 
-    this.connect({onOpen, onClose});
+    this.connect();
   }
 
-  connect({onOpen, onClose}) {
-    this.disconnect();
-    const ws = new WebSocket(this.url); 
-    this.ws = ws;
+  connect() {
+    const {url, onOpen, onClose} = this;
+    if (!this.ws || this.ws && this.ws.readyState >= 2) {
+      this.ws = new WebSocket(url); 
+    }
+    const ws = this.ws;
     onClose && (ws.onclose = onClose);
     onOpen && (ws.onopen = onOpen);
-    ws.onerror = () => this.onError();
+    ws.onerror = (error) => this.onError(error);
     ws.onmessage = (event) => this.onMessage(event);
   }
 
   disconnect() {
     if (this.ws && (
-        this.ws.readyState === READYSTATE_CONNECTING ||
-        this.ws.readyState === READYSTATE_OPEN
+        this.ws.readyState === WebSocket.CONNECTING ||
+        this.ws.readyState === WebSocket.OPEN
       )
     ) {
       this.ws.close();
@@ -44,7 +43,7 @@ export class TimeSeriesFeed {
   }
 
   readyState() {
-    return this.ws?.readyState ?? READYSTATE_CLOSED;
+    return this.ws?.readyState ?? WebSocket.CLOSED;
   }
 
   subscribe(sourceName, callback) {
@@ -53,10 +52,11 @@ export class TimeSeriesFeed {
     }
 
     if (!this.buffers[sourceName]) {
-      let t = Date.now() - MAX_BUFFER_SIZE;
       const buffer = [];
       this.buffers[sourceName] = buffer;
+
       // Fill buffer with empty data to prevent hyperactive label placement as new data comes in
+      let t = Date.now() - MAX_BUFFER_SIZE;
       while (buffer.length < MAX_BUFFER_SIZE) {
         buffer.push({
           t: t++,
@@ -65,14 +65,15 @@ export class TimeSeriesFeed {
       }
     }
 
-    const subscribers = this.subscribers[sourceName];
-    subscribers.set(key, callback);
     const key = Symbol();
+    const subs = this.subscribers[sourceName];
+    subs.set(key, callback);
+
     const unsubscribe = () => {
-      subscribers.delete(key); // Remove the listener
-      if (!subscribers.size) {
+      subs.delete(key); // Remove the listener
+      if (!subs.size) {
         // Clear out the buffer if we have no subscribers to the channel
-        delete this.buffers[sourcename];
+        delete this.buffers[sourceName];
       }
     };
     return unsubscribe;
@@ -88,25 +89,25 @@ export class TimeSeriesFeed {
   }
 
   getData(sourceName) {
-    const data = this.buffer[sourceName];
+    const data = this.buffers[sourceName];
     return data;
   }
 
-  onError() {
-    console.error("A socket error ocurred, re-establishing connection...");
+  onError(error) {
+    console.error("A socket error ocurred, re-establishing connection...", error);
     this.disconnect();
     setTimeout(() => this.connect(), 1000);
   }
 
-  onMessage({data}) {
-    const message = JSON.parse(data);
+  onMessage(event) {
+    const message = JSON.parse(event.data);
     const {[this.eventKey]: sourceName, ts: t, val: y} = message;
     let buffer = this.buffers[sourceName];
     if (!buffer) {
       // Only record messages for streams we have listeners for
       return;
     }
-    if (!isNumber(t) || isNumber(y)) {
+    if (!isNumber(t) || !isNumber(y)) {
       // Guard against bad data
       return;
     }
