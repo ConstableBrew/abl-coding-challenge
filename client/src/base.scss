@@ -13,50 +13,49 @@ body {
 }
 
 $data-streams:
-    "primary" #cc3333,
-    "secondary" #33cc33,
-    "tertiary" #3333cc;
+  "primary" #cc3333,
+  "secondary" #33cc33,
+  "tertiary" #3333cc;
 
 $sparkline-container-height: 4em;
 
 .sparklines {
-    align-content: center;
-    align-items: center;
-    display: flex;
-    height: $sparkline-container-height;
-    justify-content: space-evenly;
-    width: 100%;
+  align-content: center;
+  align-items: center;
+  display: flex;
+  height: $sparkline-container-height;
+  justify-content: space-evenly;
+  width: 100%;
 
-    > .sparkline {
-        cursor: pointer;
-        height: 2em;
-        position: relative;
-        width: 7em;
+  > .sparkline {
+    cursor: pointer;
+    height: 2em;
+    position: relative;
+    width: 7em;
 
-        &.active:after {
-          content: "🚀";
-          font-size: 2em;
-          left: -1.1em;
-          position: absolute;
-          top: 0em;
-        }
-
-        &.active:hover {
-          cursor: default;
-        }
+    &.active:after {
+      content: "🚀";
+      font-size: 2em;
+      left: -1.1em;
+      position: absolute;
+      top: 0em;
     }
 
-    @each $name, $color in $data-streams {
-        ##{$name}-sparkline {
-            box-shadow: 0px 0px 5px 0px $color;
-        }
+    &.active:hover {
+      cursor: default;
     }
+  }
+
+  @each $name, $color in $data-streams {
+    ##{$name}-sparkline {
+      box-shadow: 0px 0px 5px 0px $color;
+    }
+  }
 
 }
-
 #main-display {
     height: calc(100vh - #{$sparkline-container-height * 2});
-    margin: $sparkline-container-height 5%;
+    margin: auto auto;
     position: relative;
-    width: 90%;
+    width: calc(100vw - 4em);
 }
