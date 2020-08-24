@@ -1,5 +1,5 @@
-import Chart from "chart.js";
 import {TimeSeriesFeed} from "src/feed";
+import {chartFactory, sparklineFactory} from "src/graphs";
 
 let focusedStream = "A";
 const streamMap = new Map([
@@ -38,82 +38,6 @@ const feed = new TimeSeriesFeed({
   onClose,
 });
 
-const createCanvasAndGetCtx = (id) => {
-  const canvas = document.createElement("canvas");
-  const container = document.getElementById(id);
-  container.appendChild(canvas);
-  return canvas.getContext("2d");
-}
-
-const mainDisplayBox = createCanvasAndGetCtx("main-display");
-const mainChart = new Chart(mainDisplayBox, {
-  data: {
-    datasets: [{
-      data: [],
-      type: "line",
-      pointRadius: 0,
-      fill: false,
-      lineTension: 0,
-      borderWidth: 2,
-    }],
-  },
-  options: {
-    animation: {
-      duration: 0,
-    },
-    events: [],
-    hover: {
-      animationDuration: 0,
-    },
-    line: {
-      tension: 0,
-    },
-    legend: {
-      display: false,
-    },
-    responsiveAnimationDuration: 0,
-    maintainAspectRatio: false,
-    scales: {
-      xAxes: [{
-        type: "time",
-        distribution: "series",
-        offset: true,
-        gridLines: {
-          color: "#d3d3d3",
-        },
-        ticks: {
-          fontColor: "#d3d3d3",
-          major: {
-            enabled: true,
-            fontStyle: "bold",
-          },
-          source: "data",
-          autoSkip: true,
-          autoSkipPadding: 75,
-          maxTicksLimit: 5,
-          minRotation: 0,
-          maxRotation: 0,
-          sampleSize: 10,
-          time: {
-            unit: "seconds",
-          },
-        },
-      }],
-      yAxes: [{
-        gridLines: {
-          drawBorder: false,
-        },
-        ticks: {
-          fontColor: "#d3d3d3",
-        },
-      }],
-    },
-    spanGaps: false,
-    style: {
-      backgroundColor: "#000000",
-    },
-  },
-});
 
 const setFocus = (sourceName) => {
   focusedStream = sourceName;
@@ -131,96 +55,36 @@ const setFocus = (sourceName) => {
   });
 };
 
-const createSparkline = ({id, sourceName, color, background}) => {
-  const container = document.getElementById(id);
-  container.addEventListener("mouseup", () => console.log('setFocus', sourceName) || setFocus(sourceName));
-
-  const displayBox = createCanvasAndGetCtx(id);
-  const chart = new Chart(displayBox, {
-    data: {
-      datasets: [{
-        data: [],
-        type: "line",
-        pointBackgroundColor: color,
-        pointRadius: 1,
-        pointStyle: "rect",
-        showLine: false,
-      }],
-    },
-    options: {
-      animation: {
-        duration: 0,
-      },
-      events: [],
-      hover: {
-        animationDuration: 0,
-      },
-      line: {
-        tension: 0,
-      },
-      legend: {
-        display: false,
-      },
-      responsiveAnimationDuration: 0,
-      maintainAspectRatio: false,
-      responsive: true,
-      scales: {
-        xAxes: [{
-          type: "time",
-          distribution: "series",
-          gridLines: {
-            display: false,
-            tickMarkLength: 0,
-          },
-          ticks: {
-            display: false,
-            fontSize: 0,
-          },
-        }],
-        yAxes: [{
-          gridLines: {
-            display: false,
-            tickMarkLength: 0,
-          },
-          ticks: {
-            display: false,
-            fontSize: 0,
-          },
-        }],
-      },
-      spanGaps: false,
-      style: {
-        backgroundColor: background,
-      },
-    },
-  });
-  return chart;
-};
-
 // Create sparklines and save chart objects to the streamMap configs
-streamMap.forEach((config) => (config.chart = createSparkline(config)));
+streamMap.forEach((config) => {
+  config.chart = sparklineFactory({
+    ...config,
+    onMouseup: setFocus,
+  });
+});
 
+// Creat main chart
+const mainChart = chartFactory({id: "main-display"});
+
+// Tracks which charts have received data since the last render
+const updatedCharts = {};
+
+
+// Updates chart's data and then redraws the graph
 const drawChart = (sourceName, chartObject) => {
   const data = feed.getData(sourceName);
   try {
-    chartObject.config.data.datasets[0].data = data;
-    chartObject.update();
+    if (updatedCharts[sourceName]) {
+      chartObject.config.data.datasets[0].data = data;
+      chartObject.update();
+    }
   }
   catch (err) {
     console.error('Error when drawing chart:', err);
     // Chart.js occasionally has problems calculating the axis labels and ticks to draw in it's autoSkip calculations
   }
-};
-
-const drawMainChart = (sourceName) => {
-  const data = feed.getData(sourceName);
-  try {
-    mainChart.config.data.datasets[0].data = data;
-    mainChart.update();
-  }
-  catch (err) {
-    console.error('Error when drawing chart:', err);
-    // Chart.js occasionally has problems calculating the axis labels and ticks to draw in it's autoSkip calculations
+  finally {
+    updatedCharts[sourceName] = false;
   }
 };
 
@@ -235,10 +99,15 @@ const drawCharts = (timestamp) => {
 };
 drawCharts.timestamp = 0;
 
+const flagChartForRender = (sourceName) => {
+  updatedCharts[sourceName] = true;
+  requestAnimationFrame(drawCharts);
+}
+
 const feedSubscriptions = {
-  primaryStream: feed.subscribe("A", () => requestAnimationFrame(drawCharts)),
-  secondaryStream: feed.subscribe("B", () => requestAnimationFrame(drawCharts)),
-  tertiaryStream: feed.subscribe("C", () => requestAnimationFrame(drawCharts)),
+  primaryStream: feed.subscribe("A", () => flagChartForRender("A")),
+  secondaryStream: feed.subscribe("B", () => flagChartForRender("B")),
+  tertiaryStream: feed.subscribe("C", () => flagChartForRender("C")),
 };
 
 setFocus("A");
