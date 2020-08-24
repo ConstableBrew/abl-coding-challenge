@@ -107,21 +107,6 @@ describe("TimeSeriesFeed", () => {
     });
 
     describe("Data buffer", () => {
-        it("Fills buffer with a series of empty data points ", async () => {
-            jest.spyOn(Date, "now").mockImplementation(() => 12345678);
-            factory();
-            const aFn = jest.fn();
-            feed.subscribe("ASDF", aFn);
-            const data = feed.getData("ASDF");
-
-            const MAX_BUFFER_SIZE = 500;
-            const ts = 12345678 - MAX_BUFFER_SIZE;
-            const isEmptyData = data.every(({t, y}, i) => t === ts + i && y === undefined);
-
-            expect(data.length).toEqual(MAX_BUFFER_SIZE);
-            expect(isEmptyData).toBe(true);
-        });
-
         it("Retains data stream messages", async () => {
             factory();
             const aFn = jest.fn();

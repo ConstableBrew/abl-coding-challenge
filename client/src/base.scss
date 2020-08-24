@@ -28,6 +28,7 @@ $sparkline-container-height: 4em;
     width: 100%;
 
     > .sparkline {
+        cursor: pointer;
         height: 2em;
         position: relative;
         width: 7em;
@@ -35,8 +36,13 @@ $sparkline-container-height: 4em;
         &.active:after {
           content: "🚀";
           font-size: 2em;
-          left: -1em;
+          left: -1.1em;
           position: absolute;
+          top: 0em;
+        }
+
+        &.active:hover {
+          cursor: default;
         }
     }
 
@@ -49,6 +55,8 @@ $sparkline-container-height: 4em;
 }
 
 #main-display {
-    max-height: calc(100% - $sparkline-container-height);
-    wisth: 100%;
+    height: calc(100vh - #{$sparkline-container-height * 2});
+    margin: $sparkline-container-height 5%;
+    position: relative;
+    width: 90%;
 }

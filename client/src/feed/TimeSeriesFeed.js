@@ -56,13 +56,13 @@ export class TimeSeriesFeed {
       this.buffers[sourceName] = buffer;
 
       // Fill buffer with empty data to prevent hyperactive label placement as new data comes in
-      let t = Date.now() - MAX_BUFFER_SIZE;
-      while (buffer.length < MAX_BUFFER_SIZE) {
-        buffer.push({
-          t: t++,
-          y: undefined,
-        })
-      }
+      // let t = Date.now() - MAX_BUFFER_SIZE;
+      // while (buffer.length < MAX_BUFFER_SIZE) {
+      //   buffer.push({
+      //     t: undefined,t++,
+      //     y: undefined,
+      //   })
+      // }
     }
 
     const key = Symbol();
@@ -113,7 +113,9 @@ export class TimeSeriesFeed {
     }
 
     buffer.push({t, y});
-    buffer.shift();
+    if (buffer.length >= MAX_BUFFER_SIZE) {
+      buffer.shift(); 
+    }
 
     this.publish(sourceName);
   }
