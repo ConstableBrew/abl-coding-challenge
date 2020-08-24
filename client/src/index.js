@@ -174,7 +174,7 @@ const createSparkline = ({id, sourceName, color, background}) => {
           },
           ticks: {
             display: false,
-            tickMarkLength: 0,
+            fontSize: 0,
           },
         }],
         yAxes: [{
@@ -184,6 +184,7 @@ const createSparkline = ({id, sourceName, color, background}) => {
           },
           ticks: {
             display: false,
+            fontSize: 0,
           },
         }],
       },

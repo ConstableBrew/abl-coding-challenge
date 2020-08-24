@@ -1,6 +1,6 @@
 import {isNumber} from "src/utils";
 
-const MAX_BUFFER_SIZE = 500;
+const MAX_BUFFER_SIZE = 300;
 
 export class TimeSeriesFeed {
   constructor({
