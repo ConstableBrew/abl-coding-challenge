@@ -36,8 +36,8 @@ export const chartFactory = ({id}) => {
       scales: {
         xAxes: [{
           type: "time",
-          distribution: "series",
-          offset: true,
+          distribution: "linear",
+          offset: false,
           gridLines: {
             color: "#d3d3d3",
           },
@@ -47,16 +47,16 @@ export const chartFactory = ({id}) => {
               enabled: true,
               fontStyle: "bold",
             },
-            source: "data",
-            autoSkip: true,
-            autoSkipPadding: 75,
+            // source: "auto",
+            source: "labels",
+            autoSkip: false,
             maxTicksLimit: 5,
-            minRotation: 0,
-            maxRotation: 0,
-            sampleSize: 10,
-            time: {
-              unit: "seconds",
-            },
+            minRotation: 15,
+            maxRotation: 15,
+            sampleSize: 20,
+          },
+          time: {
+            unit: "second",
           },
         }],
         yAxes: [{

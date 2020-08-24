@@ -68,13 +68,50 @@ const mainChart = chartFactory({id: "main-display"});
 // Tracks which charts have received data since the last render
 const updatedCharts = {};
 
+// Adds label to last data point if the span between labels is sufficient
+const updateLabels = (data) => {
+  data.forEach((point, i) => {
+    if (!i) {
+      return;
+    }
+    const curSecond = Math.floor(point.t / 1000);
+    const prevPoint = data[i - 1];
+    const prevSecond = Math.floor(prevPoint.t / 1000);
+    if (prevPoint && curSecond > prevSecond) {
+      point.label = point.t;
+    }
+  });
+
+  // Ensure first point always has a label
+  const first = data[0];
+  first.label = first.t;
+//   const last = data[data.length - 1];
+//   const delta = last.t - first.t;
+// 
+//   if (delta > ONE_SECOND) {
+//     const expectedLabelCount = Math.min(Math.floor(delta / ONE_SECOND), 3);
+//     const stepSize = Math.floor(data.length / expectedLabelCount);
+//     let noLabelExists = true;
+//     let i = Math.max(0, data.length - stepSize);
+//     while (noLabelExists && i < data.length) {
+//       noLabelExists = !data[i].label;
+//       i += 1;
+//     }
+//     if (noLabelExists) {
+//       last.label = last.t;
+//     }
+//   }
+// 
+};
 
 // Updates chart's data and then redraws the graph
 const drawChart = ({sourceName, chartObject}) => {
   const data = feed.getData(sourceName);
+  updateLabels(data);
   try {
-      chartObject.config.data.datasets[0].data = data;
-      chartObject.update();
+    chartObject.config.data.datasets[0].data = data;
+    chartObject.config.data.labels = data.map((point) => point.label);
+    chartObject.update();
   }
   catch (err) {
     console.error('Error when drawing chart:', err);
