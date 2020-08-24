@@ -1,6 +1,7 @@
 import {isNumber} from "src/utils";
 
-const MAX_BUFFER_SIZE = 300;
+const MAX_BUFFER_SIZE = 1000;
+const MAX_BUFFER_TIME = 6;
 
 export class TimeSeriesFeed {
   constructor({
@@ -54,15 +55,6 @@ export class TimeSeriesFeed {
     if (!this.buffers[sourceName]) {
       const buffer = [];
       this.buffers[sourceName] = buffer;
-
-      // Fill buffer with empty data to prevent hyperactive label placement as new data comes in
-      // let t = Date.now() - MAX_BUFFER_SIZE;
-      // while (buffer.length < MAX_BUFFER_SIZE) {
-      //   buffer.push({
-      //     t: undefined,t++,
-      //     y: undefined,
-      //   })
-      // }
     }
 
     const key = Symbol();
@@ -113,7 +105,9 @@ export class TimeSeriesFeed {
     }
 
     buffer.push({t, y});
-    if (buffer.length >= MAX_BUFFER_SIZE) {
+    const timeDelta = Math.floor((t - buffer[0].t) / 1000);
+    // Retain only the limited number of seconds of data or total data points
+    if (timeDelta > MAX_BUFFER_TIME || buffer.length >= MAX_BUFFER_SIZE) {
       buffer.shift(); 
     }
 
