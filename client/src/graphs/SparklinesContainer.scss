@@ -1,0 +1,22 @@
+@import "styles/variables";
+
+.sparklines {
+  align-content: center;
+  align-items: center;
+  display: flex;
+  height: $sparkline-container-height;
+  justify-content: space-evenly;
+  width: 100%;
+
+  $color-swatch:
+    #cc3333,
+    #33cc33,
+    #3333cc;
+
+  @each $color in $color-swatch {
+    &:nth-child($i){
+      box-shadow: 0px 0px 5px 0px $color;
+    }
+  }
+
+}

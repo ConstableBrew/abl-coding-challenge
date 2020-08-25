@@ -1,0 +1,18 @@
+.sparkline {
+  cursor: pointer;
+  height: 2em;
+  position: relative;
+  width: 7em;
+
+  &.active:after {
+    content: "🚀";
+    font-size: 2em;
+    left: -1.1em;
+    position: absolute;
+    top: 0em;
+  }
+
+  &.active {
+    cursor: default;
+  }
+}
