@@ -9,7 +9,7 @@ export const Sparkline = ({isActive, color, data, onClick}) => {
   
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     const config = sparklineConfig();
     config.data.datasets[0].pointBackgroundColor = color;
     const chart = new Chart(ctx, config);

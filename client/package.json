@@ -42,6 +42,7 @@
         "normalize-scss": "^7.0.1",
         "sass": "^1.26.10",
         "sass-loader": "^9.0.3",
+        "style-loader": "^1.2.1",
         "webpack": "^4.44.1",
         "webpack-cli": "^3.3.11"
     },

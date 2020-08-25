@@ -1,0 +1,8 @@
+@import "~styles/variables";
+
+.graph {
+    height: calc(100vh - #{$sparkline-container-height * 2});
+    margin: auto auto;
+    position: relative;
+    width: calc(100vw - 4em);
+}

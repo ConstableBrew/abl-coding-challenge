@@ -1,6 +1,7 @@
 import React, {useRef, useEffect, useLayoutEffect} from "react";
 import Chart from "chart.js";
 import {graphConfig} from "./helpers";
+import "./Graph.scss";
 
 export const Graph = ({color, data}) => {
   const canvasRef = useRef(null);

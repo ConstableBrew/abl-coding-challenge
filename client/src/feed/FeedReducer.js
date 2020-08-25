@@ -11,7 +11,8 @@ const defaultState = {
 export const FeedReducer = (state = defaultState, {type, payload}) => {
   switch (type) {
     case FeedActionTypes.AddChannel: {
-      if (state.buffers[payload]) {
+      const channel = payload;
+      if (state.buffers[channel]) {
         return state;
       }
 
@@ -19,7 +20,7 @@ export const FeedReducer = (state = defaultState, {type, payload}) => {
         ...state,
         buffers: {
           ...state.buffers,
-          ...{[payload]: []},
+          ...{[channel]: []},
         },
       };
     }
@@ -63,7 +64,7 @@ export const FeedReducer = (state = defaultState, {type, payload}) => {
 
       // Ensure first point always has a label
       newBuffer[0] = {
-        ...newBuffer[0]
+        ...newBuffer[0],
         label: newBuffer[0].t,
       };
 

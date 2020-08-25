@@ -1,2 +1,2 @@
 export const selectChannelNames = (state) => Object.keys(state.feed.buffers);
-export const selectChannelData = (channelName) => (state) => state.feed.buffers[channelName];
+export const selectChannelData = (channel) => (state) => state.feed.buffers[channel];

@@ -29,7 +29,7 @@ module.exports = {
         alias: {
             src: path.resolve(__dirname, 'src/'),
         },
-        extensions: ['.js', '.jsx'],
+        extensions: ['.js', '.jsx', '.scss'],
     },
     watchOptions: {
         aggregateTimeout: 250,

@@ -1,13 +1,17 @@
+@import "~styles/variables";
+
 .sparkline {
+  $sparkline-height: $sparkline-container-height / 2;
+
   cursor: pointer;
-  height: 2em;
+  height: $sparkline-height;
   position: relative;
-  width: 7em;
+  width: $sparkline-height * 3.5;
 
   &.active:after {
     content: "🚀";
-    font-size: 2em;
-    left: -1.1em;
+    font-size: $sparkline-height;
+    left: -($sparkline-height / 2);
     position: absolute;
     top: 0em;
   }
