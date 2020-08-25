@@ -17,6 +17,6 @@ export const feedClosed = () => ({
     type: FeedActionTypes.Closed,
 });
 
-export const AddChannel = () => ({
+export const addChannel = () => ({
     type: FeedActionTypes.AddChannel,
 });

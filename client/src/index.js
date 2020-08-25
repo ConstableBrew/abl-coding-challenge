@@ -1,3 +1,19 @@
+import React from "react";
+import {render} from "react-dom";
+import {Provider} from "react-redux";
+import {App} from "src/components/App";
+import {configureStore} from "./configureStore";
+
+const store = configureStore();
+
+render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById("root")
+);
+
+
 import {TimeSeriesFeed} from "src/feed";
 import {chartFactory, sparklineFactory} from "src/graphs";
 
@@ -41,7 +57,7 @@ const feed = new TimeSeriesFeed({
 
 const setFocus = (sourceName) => {
   focusedStream = sourceName;
-  // Remove .active from each of the sparkline graphs and add .active to the one focused on
+  // Remove .active from each of the sparkline graphs and add .active to the one focused one
   streamMap.forEach((config, name) => {
     if (name === sourceName) {
       document.getElementById(config.id).classList.add('active');
@@ -68,46 +84,10 @@ const mainChart = chartFactory({id: "main-display"});
 // Tracks which charts have received data since the last render
 const updatedCharts = {};
 
-// Adds label to last data point if the span between labels is sufficient
-const updateLabels = (data) => {
-  data.forEach((point, i) => {
-    if (!i) {
-      return;
-    }
-    const curSecond = Math.floor(point.t / 1000);
-    const prevPoint = data[i - 1];
-    const prevSecond = Math.floor(prevPoint.t / 1000);
-    if (prevPoint && curSecond > prevSecond) {
-      point.label = point.t;
-    }
-  });
 
-  // Ensure first point always has a label
-  const first = data[0];
-  first.label = first.t;
-//   const last = data[data.length - 1];
-//   const delta = last.t - first.t;
-// 
-//   if (delta > ONE_SECOND) {
-//     const expectedLabelCount = Math.min(Math.floor(delta / ONE_SECOND), 3);
-//     const stepSize = Math.floor(data.length / expectedLabelCount);
-//     let noLabelExists = true;
-//     let i = Math.max(0, data.length - stepSize);
-//     while (noLabelExists && i < data.length) {
-//       noLabelExists = !data[i].label;
-//       i += 1;
-//     }
-//     if (noLabelExists) {
-//       last.label = last.t;
-//     }
-//   }
-// 
-};
-
-// Updates chart's data and then redraws the graph
+// Refreshes a single chart's data and then redraws the graph
 const drawChart = ({sourceName, chartObject}) => {
   const data = feed.getData(sourceName);
-  updateLabels(data);
   try {
     chartObject.config.data.datasets[0].data = data;
     chartObject.config.data.labels = data.map((point) => point.label);
@@ -119,6 +99,7 @@ const drawChart = ({sourceName, chartObject}) => {
   }
 };
 
+// Primary animation loop
 const drawCharts = (timestamp) => {
   if (timestamp <= drawCharts.timestamp) {
     // Duplicate call to requestAnimationFrame
@@ -126,13 +107,17 @@ const drawCharts = (timestamp) => {
   }
   drawCharts.timestamp = timestamp;
 
+  // Draw only charts that have changed since last render
   for (const sourceName in updatedCharts) {
     if (updatedCharts[sourceName]) {
       const config = streamMap.get(sourceName)
+      // Draw the sparkline charts
       drawChart({
         sourceName: config.sourceName,
         chartObject: config.chart,
       });
+
+      // The main chart also needs to be updated
       if (focusedStream === sourceName) {
         drawChart({
           sourceName,
@@ -145,6 +130,7 @@ const drawCharts = (timestamp) => {
 };
 drawCharts.timestamp = 0;
 
+// Sets tracking flag for which charts have been updated since the last render and triggers the next render
 const flagChartForRender = (sourceName) => {
   updatedCharts[sourceName] = true;
   requestAnimationFrame(drawCharts);

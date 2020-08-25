@@ -1,7 +1,123 @@
+export const graphConfig = () => ({
+  data: {
+    datasets: [{
+      data: [],
+      type: "line",
+      pointRadius: 0,
+      fill: false,
+      lineTension: 0,
+      borderWidth: 2,
+    }],
+  },
+  options: {
+    animation: {
+      duration: 0,
+    },
+    events: [],
+    hover: {
+      animationDuration: 0,
+    },
+    line: {
+      tension: 0,
+    },
+    legend: {
+      display: false,
+    },
+    responsiveAnimationDuration: 0,
+    maintainAspectRatio: false,
+    scales: {
+      xAxes: [{
+        type: "time",
+        distribution: "linear",
+        offset: false,
+        gridLines: {
+          color: "#d3d3d3",
+        },
+        ticks: {
+          fontColor: "#d3d3d3",
+          major: {
+            enabled: true,
+            fontStyle: "bold",
+          },
+          source: "labels",
+          autoSkip: false,
+          maxTicksLimit: 5,
+          minRotation: 15,
+          maxRotation: 15,
+          sampleSize: 20,
+        },
+        time: {
+          unit: "second",
+        },
+      }],
+      yAxes: [{
+        gridLines: {
+          drawBorder: false,
+        },
+        ticks: {
+          fontColor: "#d3d3d3",
+        },
+      }],
+    },
+    spanGaps: false,
+    style: {
+      backgroundColor: "#000000",
+    },
+  },
+});
 
-export const createCanvasAndGetCtx = (id) => {
-  const canvas = document.createElement("canvas");
-  const container = document.getElementById(id);
-  container.appendChild(canvas);
-  return canvas.getContext("2d");
-};
+export const sparklineConfig = () => ({
+  data: {
+    datasets: [{
+      data: [],
+      type: "line",
+      pointRadius: 1,
+      pointStyle: "rect",
+      showLine: false,
+    }],
+  },
+  options: {
+    animation: {
+      duration: 0,
+    },
+    events: [],
+    hover: {
+      animationDuration: 0,
+    },
+    line: {
+      tension: 0,
+    },
+    legend: {
+      display: false,
+    },
+    responsiveAnimationDuration: 0,
+    maintainAspectRatio: false,
+    responsive: true,
+    scales: {
+      xAxes: [{
+        type: "time",
+        distribution: "series",
+        gridLines: {
+          display: false,
+          tickMarkLength: 0,
+        },
+        ticks: {
+          display: false,
+          fontSize: 0,
+        },
+      }],
+      yAxes: [{
+        gridLines: {
+          display: false,
+          tickMarkLength: 0,
+        },
+        ticks: {
+          display: false,
+          fontSize: 0,
+        },
+      }],
+    },
+    spanGaps: false,
+  },
+});
+

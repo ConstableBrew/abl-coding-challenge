@@ -1,8 +1,9 @@
 import React, {useRef, useEffect, useLayoutEffect} from "react";
 import Chart from "chart.js";
 import {sparklineConfig} from "./helpers";
+import "./Sparkline.scss";
 
-export const Sparkline = ({className, color, data, onClick}) => {
+export const Sparkline = ({isActive, color, data, onClick}) => {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
   
@@ -22,10 +23,12 @@ export const Sparkline = ({className, color, data, onClick}) => {
     }
   }, [chartRef, data]);
   
-  return <div 
-    className={["sparkline", className].join(" ")}
-    onClick={onClick}
-  >
-    <canvas ref={canvasRef} />
-  </div>;
+  return (
+    <div 
+      className={["sparkline", isActive && "active"].filter((x) => x).join(" ")}
+      onClick={onClick}
+    >
+      <canvas ref={canvasRef} />
+    </div>
+  );
 }
