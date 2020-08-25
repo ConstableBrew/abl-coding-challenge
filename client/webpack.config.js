@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js',
@@ -34,4 +35,5 @@ module.exports = {
         aggregateTimeout: 250,
         ignored: [/node_modules/, /public/, /coverage/, /\.test\.js/],
     },
+    plugins: [new HtmlWebpackPlugin({ template: path.resolve(__dirname, 'src/index.html') })]
 };
