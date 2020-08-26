@@ -4,6 +4,7 @@ import {Provider} from "react-redux";
 import {store} from "src/store";
 import {App} from "src/app";
 import {Feed, FeedActions} from "src/feed";
+import "src/animation-frame/AnimationFrame";
 
 const feed = new Feed({url: "ws://localhost:8080/"});
 store.dispatch(FeedActions.addChannel("A"));

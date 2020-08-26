@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useLayoutEffect, useRef} from "react";
 import {useSelector} from "react-redux";
+import {AnimationFrameSelectors} from "src/animation-frame";
 import {AppSelectors} from "src/app";
 import {FeedSelectors} from "src/feed";
 import {Graph} from "./Graph";
@@ -12,13 +13,19 @@ const colorSwatch = {
 };
 
 export function GraphContainer() {
+  const animationFrame = useSelector(AnimationFrameSelectors.selectAnimationFrame);
   const activeChannel = useSelector(AppSelectors.selectActiveChannel);
-  const data = useSelector(FeedSelectors.selectChannelData(activeChannel));
+  const data = useSelector(FeedSelectors.selectChannelData)[activeChannel];
+  const dataRef = useRef(data);
+
+  useLayoutEffect(() => {
+    dataRef.current = data;
+  }, [animationFrame]);
 
   return (
     <Graph
       color={colorSwatch[activeChannel]}
-      data={data}
+      data={dataRef.current}
     />
   );
 }

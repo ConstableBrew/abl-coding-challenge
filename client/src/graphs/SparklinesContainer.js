@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useLayoutEffect, useRef} from "react";
 import {useSelector, useDispatch} from "react-redux";
+import {AnimationFrameSelectors} from "src/animation-frame";
 import {AppActions, AppSelectors} from "src/app";
 import {FeedSelectors} from "src/feed";
 import {Sparkline} from "./Sparkline";
@@ -13,9 +14,24 @@ const colorSwatch = {
 };
 
 export function SparklinesContainer() {
-  const channels = useSelector(FeedSelectors.selectChannelNames);
   const activeChannel = useSelector(AppSelectors.selectActiveChannel);
+  const animationFrame = useSelector(AnimationFrameSelectors.selectAnimationFrame);
+  const channels = useSelector(FeedSelectors.selectChannelNames);
+  const channelData = useSelector(FeedSelectors.selectChannelData);
   const dispatch = useDispatch();
+
+  const dataRef = useRef(
+    channels.reduce((map, channel) => {
+      map[channel] = channelData[channel];
+      return map;
+    }, {})
+  );
+
+  useLayoutEffect(() => {
+    channels.forEach((channel) => {
+      dataRef.current[channel] = channelData[channel];
+    });
+  }, [animationFrame]);
 
   return (
     <div className="sparklines">
@@ -24,7 +40,7 @@ export function SparklinesContainer() {
           <Sparkline
             key={`sparkline-${channel}`}
             color={colorSwatch[channel]}
-            data={useSelector(FeedSelectors.selectChannelData(channel))}
+            data={dataRef.current[channel]}
             isActive={activeChannel === channel}
             onClick={() => dispatch(AppActions.setActiveChannel(channel))}
           />
