@@ -6,6 +6,7 @@ const MAX_BUFFER_TIME = 6000;
 
 const defaultState = {
   buffers: {},
+  readyState: WebSocket.CLOSED,
 };
 
 export const FeedReducer = (state = defaultState, {type, payload}) => {
@@ -23,6 +24,22 @@ export const FeedReducer = (state = defaultState, {type, payload}) => {
           ...{[channel]: []},
         },
       };
+    }
+    break;
+
+    case FeedActionTypes.Opened: {
+      return {
+        ...state,
+        readyState: WebSocket.OPEN,
+      }
+    }
+    break;
+
+    case FeedActionTypes.Closed: {
+      return {
+        ...state,
+        readyState: WebSocket.CLOSED,
+      }
     }
     break;
 

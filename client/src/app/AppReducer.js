@@ -35,7 +35,7 @@ export const AppReducer = (state = defaultState, {type, payload}) => {
     break;
 
     case FeedActionTypes.Closed: {
-      document.body.classList.remove("loading-spinner");
+      document.body.classList.add("loading-spinner");
       return state;
     }
     break;
