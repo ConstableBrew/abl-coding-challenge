@@ -29,11 +29,18 @@ module.exports = {
         alias: {
             src: path.resolve(__dirname, 'src/'),
         },
-        extensions: ['.js', '.jsx', '.scss'],
+        extensions: ['.js', '.jsx'],
     },
     watchOptions: {
         aggregateTimeout: 250,
         ignored: [/node_modules/, /public/, /coverage/, /\.test\.js/],
     },
-    plugins: [new HtmlWebpackPlugin({ template: path.resolve(__dirname, 'src/index.html') })]
+    plugins: [new HtmlWebpackPlugin({
+        filename: path.resolve(__dirname, 'public/index.html'),
+        hash: 'true',
+        scriptLoading: 'defer',
+        template: path.resolve(__dirname, 'src/index.html'),
+        title: 'ABL Coding Challenge',
+    })]
 };
+

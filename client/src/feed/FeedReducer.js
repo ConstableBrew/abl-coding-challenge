@@ -5,7 +5,7 @@ const MAX_BUFFER_SIZE = 1000;
 const MAX_BUFFER_TIME = 6000;
 
 const defaultState = {
-  bufers: {},
+  buffers: {},
 };
 
 export const FeedReducer = (state = defaultState, {type, payload}) => {
@@ -53,7 +53,7 @@ export const FeedReducer = (state = defaultState, {type, payload}) => {
       }
 
       buffer.push();
-      const timeDelta = (t - buffer[0].t);
+      const timeDelta = (t - buffer[0]?.t || t);
       let i = 0;
       // Retain only the limited number of seconds of data or total data points
       if (timeDelta >= MAX_BUFFER_TIME || buffer.length >= MAX_BUFFER_SIZE) {

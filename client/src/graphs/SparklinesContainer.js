@@ -22,6 +22,7 @@ export function SparklinesContainer() {
       {
         channels.map((channel) => (
           <Sparkline
+            key={`sparkline-${channel}`}
             color={colorSwatch[channel]}
             data={useSelector(FeedSelectors.selectChannelData(channel))}
             isActive={activeChannel === channel}

@@ -5,7 +5,7 @@ import {store} from "src/store";
 import {App} from "src/app";
 import {Feed, FeedActions} from "src/feed";
 
-const feed = new Feed("ws://localhost:8080/");
+const feed = new Feed({url: "ws://localhost:8080/"});
 store.dispatch(FeedActions.addChannel("A"));
 store.dispatch(FeedActions.addChannel("B"));
 store.dispatch(FeedActions.addChannel("C"));
