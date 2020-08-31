@@ -17,7 +17,7 @@ export const AppReducer = (state = defaultState, {type, payload}) => {
     break;
 
     case FeedActionTypes.AddChannel: {
-      const channel = payload;
+      const {channel} = payload;
       if (state.activeChannel) {
         return state;
       }

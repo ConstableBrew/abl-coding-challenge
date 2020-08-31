@@ -2,11 +2,7 @@ import * as FeedActionTypes from "./FeedActionTypes";
 
 export const feedMessage = ({channel, t, y}) => ({
     type: FeedActionTypes.Message,
-    payload: {
-        channel,
-        t,
-        y,
-    },
+    payload: {channel, t, y},
 });
 
 export const feedOpened = () => ({
@@ -17,7 +13,7 @@ export const feedClosed = () => ({
     type: FeedActionTypes.Closed,
 });
 
-export const addChannel = (channel) => ({
+export const addChannel = ({channel, schema}) => ({
     type: FeedActionTypes.AddChannel,
-    payload: channel,
+    payload: {channel, schema},
 });

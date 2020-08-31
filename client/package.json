@@ -18,6 +18,7 @@
         ]
     },
     "dependencies": {
+        "@chartshq/muze": "^2.0.0",
         "chart.js": "^2.9.3",
         "moment": "^2.27.0",
         "react": "^16.13.1",
@@ -34,6 +35,7 @@
         "@babel/preset-env": "^7.10.3",
         "@babel/preset-react": "^7.10.4",
         "babel-loader": "^8.1.0",
+        "copy-webpack-plugin": "^6.0.4",
         "css-loader": "^4.2.2",
         "html-webpack-plugin": "^4.3.0",
         "jest": "^26.0.1",
@@ -70,7 +72,7 @@
     },
     "scripts": {
         "build": "webpack --mode=production --progress && npm run build-sass",
-        "build-scss": "node-sass src/base.scss public/css/base.css --output-style compressed",
+        "build-sass": "node-sass src/base.scss public/css/base.css --output-style compressed",
         "start": "node ./server.js",
         "test": "jest --coverage",
         "watch-build": "webpack --mode=development --watch --progress",

@@ -7,12 +7,13 @@ const MAX_BUFFER_TIME = 6000;
 const defaultState = {
   buffers: {},
   readyState: WebSocket.CLOSED,
+  schema: {},
 };
 
 export const FeedReducer = (state = defaultState, {type, payload}) => {
   switch (type) {
     case FeedActionTypes.AddChannel: {
-      const channel = payload;
+      const {channel, schema} = payload;
       if (state.buffers[channel]) {
         return state;
       }
@@ -21,7 +22,11 @@ export const FeedReducer = (state = defaultState, {type, payload}) => {
         ...state,
         buffers: {
           ...state.buffers,
-          ...{[channel]: []},
+          [channel]: [],
+        },
+        schema: {
+          ...state.schema,
+          [channel]: schema,
         },
       };
     }

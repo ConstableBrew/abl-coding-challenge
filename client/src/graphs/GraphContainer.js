@@ -5,7 +5,7 @@ import {AppSelectors} from "src/app";
 import {FeedSelectors} from "src/feed";
 import {Graph} from "./Graph";
 
-// TODO import colors form scss, don't hard code channel name
+// TODO import colors form scss
 const colorSwatch = {
   A: "#cc3333",
   B: "#33cc33",
@@ -16,6 +16,7 @@ export function GraphContainer() {
   const animationFrame = useSelector(AnimationFrameSelectors.selectAnimationFrame);
   const activeChannel = useSelector(AppSelectors.selectActiveChannel);
   const data = useSelector(FeedSelectors.selectChannelData)[activeChannel];
+  const schema = useSelector(FeedSelectors.selectChannelSchema)[activeChannel];
   const dataRef = useRef(data);
 
   useLayoutEffect(() => {
@@ -26,6 +27,7 @@ export function GraphContainer() {
     <Graph
       color={colorSwatch[activeChannel]}
       data={dataRef.current}
+      schema={schema}
     />
   );
 }
