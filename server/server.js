@@ -17,7 +17,7 @@ const primaryDs = newDataSource({
 });
 
 const secondaryDs = newDataSource({
-  eventsPerSecond: 10,
+  eventsPerSecond: 100,
   sourceName: "B",
   freq: 2,
   scale: 3,
@@ -25,7 +25,7 @@ const secondaryDs = newDataSource({
 });
 
 const tertiaryDs = newDataSource({
-  eventsPerSecond: 50,
+  eventsPerSecond: 100,
   sourceName: "C",
   freq: 0.5,
   scale: 1.5,

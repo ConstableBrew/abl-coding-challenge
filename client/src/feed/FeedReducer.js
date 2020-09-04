@@ -1,7 +1,7 @@
 import {isNumber} from "src/utils";
 import * as FeedActionTypes from "./FeedActionTypes";
 
-const MAX_BUFFER_SIZE = 1000;
+const MAX_BUFFER_SIZE = 100;
 const MAX_BUFFER_TIME = 6000;
 
 const defaultState = {
@@ -16,12 +16,15 @@ export const FeedReducer = (state = defaultState, {type, payload}) => {
       if (state.buffers[channel]) {
         return state;
       }
+      const buffer = new Array(MAX_BUFFER_SIZE).fill(() => ({t: null, y: null, label: null}));
+      buffer.pointer = 0;
 
       return {
         ...state,
         buffers: {
           ...state.buffers,
-          ...{[channel]: []},
+          // ...{[channel]: []},
+          ...{[channel]: buffer},
         },
       };
     }
@@ -46,6 +49,9 @@ export const FeedReducer = (state = defaultState, {type, payload}) => {
     case FeedActionTypes.Message: {
       const {channel, t, y} = payload;
       const buffer = state.buffers[channel];
+      const pointer = buffer.pointer; // Pointer to the next index to write to
+      const prevPointPointer = (pointer ? pointer : buffer.length) - 1; // If pointer is at 0, we wrap back around
+      const nextPointPointer = (pointer + 1 === buffer.length ? 0 : pointer + 1); // If pointer is at end of array, we wrap back around
 
       if (!buffer) {
         // Only record messages for streams we have listeners for
@@ -60,38 +66,31 @@ export const FeedReducer = (state = defaultState, {type, payload}) => {
       // All other data points will not be labeled
       // This creates a visually persistent label over time
       let label = undefined;
-      if (buffer.length) {
-        const curSecond = Math.floor(t / 1000);
-        const prevPoint = buffer[buffer.length - 1];
-        const prevSecond = Math.floor(prevPoint.t / 1000);
-        if (curSecond > prevSecond) {
-          label = t;
-        }
+      const curSecond = Math.floor(t / 1000);
+      const prevPoint = buffer[prevPointPointer];
+      const prevSecond = Math.floor(prevPoint.t / 1000);
+      if (!prevSecond || curSecond > prevSecond) {
+        label = t;
       }
 
-      buffer.push();
-      const timeDelta = (t - buffer[0]?.t || t);
-      let i = 0;
-      // Retain only the limited number of seconds of data or total data points
-      if (timeDelta >= MAX_BUFFER_TIME || buffer.length >= MAX_BUFFER_SIZE) {
-        i += 1;
-      }
-      const newBuffer = buffer.slice(i);
-      newBuffer.push({t, y, label});
+      // const timeDelta = (t - buffer[0]?.t || t);
+      // let i = 0;
+      // // Retain only the limited number of seconds of data or total data points
+      // if (timeDelta >= MAX_BUFFER_TIME || buffer.length >= MAX_BUFFER_SIZE) {
+      //   i += 1;
+      // }
+      // const newBuffer = buffer.slice(i);
+      buffer[pointer].t = t;
+      buffer[pointer].y = y;
+      buffer[pointer].label = label;
 
       // Ensure first point always has a label
-      newBuffer[0] = {
-        ...newBuffer[0],
-        label: newBuffer[0].t,
-      };
+      buffer[nextPointPointer].label = buffer[nextPointPointer].t;
 
-      return {
-        ...state,
-        buffers: {
-          ...state.buffers,
-          [channel]: newBuffer,
-        },
-      };
+      // Increment our pointer to the next index since we've updated this one
+      buffer.pointer = nextPointPointer;
+
+      return state;
 
     }
     break;

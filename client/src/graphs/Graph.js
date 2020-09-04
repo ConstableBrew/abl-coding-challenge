@@ -19,6 +19,7 @@ export const Graph = ({color, data}) => {
 
   useLayoutEffect(() => {
     if (chartRef.current) {
+      const t0 = performance.now(); // Debug
       chartRef.current.config.data.datasets[0].backgroundColor = color;
       chartRef.current.config.data.datasets[0].borderColor = color;
       chartRef.current.config.data.datasets[0].data = data;
