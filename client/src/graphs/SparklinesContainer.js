@@ -29,7 +29,7 @@ export function SparklinesContainer() {
 
   useLayoutEffect(() => {
     channels.forEach((channel) => {
-      dataRef.current[channel] = channelData[channel];
+      dataRef.current[channel] = [...channelData[channel]];
     });
   }, [animationFrame]);
 

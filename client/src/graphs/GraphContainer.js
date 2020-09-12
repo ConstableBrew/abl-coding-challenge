@@ -4,6 +4,7 @@ import {AnimationFrameSelectors} from "src/animation-frame";
 import {AppSelectors} from "src/app";
 import {FeedSelectors} from "src/feed";
 import {Graph} from "./Graph";
+import {formatLabel} from "./helpers";
 
 // TODO import colors form scss, don't hard code channel name
 const colorSwatch = {
@@ -15,17 +16,30 @@ const colorSwatch = {
 export function GraphContainer() {
   const animationFrame = useSelector(AnimationFrameSelectors.selectAnimationFrame);
   const activeChannel = useSelector(AppSelectors.selectActiveChannel);
-  const data = useSelector(FeedSelectors.selectChannelData)[activeChannel];
-  const dataRef = useRef(data);
+  const channelData = useSelector(FeedSelectors.selectChannelData);
+  const dataRef = useRef(channelData[activeChannel]);
+  const labelRef = useRef(channelData[activeChannel].map(() => undefined));
 
   useLayoutEffect(() => {
-    dataRef.current = data;
+    const buffer = channelData[activeChannel];
+    dataRef.current = [
+      ...buffer.slice(buffer.pointer, buffer.length),
+      ...buffer.slice(0, buffer.pointer),
+    ];
+    labelRef.current = dataRef.current.map((point, index) => point 
+      && (
+        point.label && point.label  ||
+        index === 0 && point.t // label the first point
+      ) || undefined
+    );
   }, [animationFrame]);
 
   return (
     <Graph
+      animationFrame={animationFrame}
       color={colorSwatch[activeChannel]}
       data={dataRef.current}
+      labels={labelRef.current}
     />
   );
 }

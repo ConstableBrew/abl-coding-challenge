@@ -3,14 +3,15 @@ import Chart from "chart.js";
 import {graphConfig} from "./helpers";
 import "./Graph.scss";
 
-export const Graph = ({color, data}) => {
+
+export const Graph = ({animationFrame, color, data, labels}) => {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
   
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       const config = graphConfig();
       const chart = new Chart(ctx, config);
       chartRef.current = chart;
@@ -19,14 +20,13 @@ export const Graph = ({color, data}) => {
 
   useLayoutEffect(() => {
     if (chartRef.current) {
-      const t0 = performance.now(); // Debug
       chartRef.current.config.data.datasets[0].backgroundColor = color;
       chartRef.current.config.data.datasets[0].borderColor = color;
       chartRef.current.config.data.datasets[0].data = data;
-      chartRef.current.config.data.labels = data.map((point) => point.label);
+      chartRef.current.config.data.labels = labels;
       chartRef.current.update();
     }
-  }, [chartRef.current, color, data]);
+  }, [animationFrame]);
   
   return <div 
     className="graph"

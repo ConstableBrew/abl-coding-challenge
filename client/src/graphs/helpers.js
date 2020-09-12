@@ -1,12 +1,24 @@
+const labelFormatter = new Intl.DateTimeFormat({hour: "numeric", minute: "numeric", second: "numeric"});
+export const formatLabel = (timestamp) => {
+  try {
+    return labelFormatter.format(new Date(timestamp));
+  }
+  catch (err) {
+    return timestamp;
+  }
+};
+
 export const graphConfig = () => ({
   data: {
     datasets: [{
       data: [],
       type: "line",
-      pointRadius: 0,
+      pointRadius: 2,
       fill: false,
       lineTension: 0,
       borderWidth: 2,
+      pointStyle: "rect",
+      showLine: true,
     }],
   },
   options: {
@@ -96,7 +108,7 @@ export const sparklineConfig = () => ({
     scales: {
       xAxes: [{
         type: "time",
-        distribution: "series",
+        distribution: "linear",
         gridLines: {
           display: false,
           tickMarkLength: 0,

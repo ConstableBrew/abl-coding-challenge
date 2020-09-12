@@ -16,7 +16,7 @@ export const FeedReducer = (state = defaultState, {type, payload}) => {
       if (state.buffers[channel]) {
         return state;
       }
-      const buffer = new Array(MAX_BUFFER_SIZE).fill(() => ({t: null, y: null, label: null}));
+      const buffer = new Array(MAX_BUFFER_SIZE).fill(null).map(() => ({t: null, y: null, label: null}));
       buffer.pointer = 0;
 
       return {
@@ -49,7 +49,7 @@ export const FeedReducer = (state = defaultState, {type, payload}) => {
     case FeedActionTypes.Message: {
       const {channel, t, y} = payload;
       const buffer = state.buffers[channel];
-      const pointer = buffer.pointer; // Pointer to the next index to write to
+      const pointer = buffer.pointer; // Current pointer
       const prevPointPointer = (pointer ? pointer : buffer.length) - 1; // If pointer is at 0, we wrap back around
       const nextPointPointer = (pointer + 1 === buffer.length ? 0 : pointer + 1); // If pointer is at end of array, we wrap back around
 
@@ -84,11 +84,8 @@ export const FeedReducer = (state = defaultState, {type, payload}) => {
       buffer[pointer].y = y;
       buffer[pointer].label = label;
 
-      // Ensure first point always has a label
-      buffer[nextPointPointer].label = buffer[nextPointPointer].t;
-
-      // Increment our pointer to the next index since we've updated this one
-      buffer.pointer = nextPointPointer;
+      // Increment our pointer to the now first data point since we've updated this one
+      buffer.pointer = nextPointPointer;;
 
       return state;
 
